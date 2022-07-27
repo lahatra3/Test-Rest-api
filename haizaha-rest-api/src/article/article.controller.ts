@@ -1,6 +1,7 @@
-import { Controller, ForbiddenException, Get, Request, UseGuards } from '@nestjs/common';
+import { Body, Controller, ForbiddenException, Get, NotAcceptableException, Post, Request, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { ArticleService } from './article.service';
+import { ArticleCreateDto } from './dto';
 
 @Controller('article')
 export class ArticleController {
@@ -13,10 +14,18 @@ export class ArticleController {
         return await this.articleService.findAll();
     }
 
-    
+    @UseGuards(AuthGuard('jwt_haizaha'))
     @Get('user')
     async getArticles(@Request() req: any) {
         const donnees = { user_id: parseInt(req.user.id) }
         return await this.articleService.findOne(donnees);
     }
+
+    @UseGuards(AuthGuard('jwt_haizaha'))
+    @Post()
+    async createArticle(@Body() donnees: ArticleCreateDto, @Request() req: any) {
+        if(!donnees) throw new NotAcceptableException("Credentials incorrects !");
+        return await this.articleService.create(parseInt(req.user.id), donnees);
+    }
+
 }

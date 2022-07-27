@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Article, Category, User } from 'src/output';
 import { Repository } from 'typeorm';
-import { ArticleByUserDto } from './dto';
+import { ArticleByUserDto, ArticleCreateDto } from './dto';
 
 @Injectable()
 export class ArticleService {
@@ -45,5 +45,22 @@ export class ArticleService {
                 user_id: donnees.user_id
             })
         .getRawMany()
+    }
+
+    async create(user_id: number, donnees: ArticleCreateDto): Promise<void> {
+        await this.articleRepository
+        .createQueryBuilder()
+        .insert()
+        .into(Article)
+        .values({
+            name: donnees.name,
+            label: donnees.label,
+            categoryId: donnees.category_id,
+            userId: user_id,
+            createdAt: () => "NOW()",
+            updatedAt: null,
+            deletedAt: null
+        })
+        .execute();
     }
 }
