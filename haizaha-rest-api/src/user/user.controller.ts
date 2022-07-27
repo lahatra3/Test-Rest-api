@@ -10,14 +10,14 @@ export class UserController {
     @UseGuards(AuthGuard('jwt_haizaha'))
     @Get('all')
     async getAllUser(@Request() req: any) {
-        if(req.user.role !== "Viewer") throw new ForbiddenException('Credentials incorrects !');
+        if(req.user.role === "Viewer") throw new ForbiddenException('Credentials incorrects !');
         return await this.userService.findAll();
     }
 
     @UseGuards(AuthGuard('jwt_haizaha'))
     @Get()
     async getUser(@Request() req: any) {
-        if(req.user.role !== "Viewer") throw new ForbiddenException('Credentials incorrects !');
+        if(req.user.role === "Viewer") throw new ForbiddenException('Credentials incorrects !');
         return await this.userService.findOne(parseInt(req.user.id));
     }
 
@@ -30,13 +30,15 @@ export class UserController {
     @UseGuards(AuthGuard('jwt_haizaha'))
     @Patch('update')
     async updateUser(@Body() donnees: UserUpdateDto, @Request() req: any) {
+        if(req.user.role === "Viewer") throw new ForbiddenException('Credentials incorrects !');
         if(!donnees) throw new NotAcceptableException("Credentials incorrects !");
         return await this.userService.update(parseInt(req.user.id), donnees);
     }
 
     @UseGuards(AuthGuard('jwt_haizaha'))
     @Delete('delete')
-    async removeUser(@Body() donnees: { user_id: number }) {
+    async removeUser(@Body() donnees: { user_id: number }, @Request() req: any) {
+        if(req.user.role === "Viewer") throw new ForbiddenException('Credentials incorrects !');
         if(!donnees) throw new NotAcceptableException("Credentials incorrects !");
         return await this.userService.remove(donnees);
     }
