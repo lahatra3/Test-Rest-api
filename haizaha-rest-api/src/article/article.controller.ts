@@ -21,7 +21,7 @@ export class ArticleController {
     }
 
     @UseGuards(AuthGuard('jwt_haizaha'))
-    @Post()
+    @Post('create')
     async createArticle(@Body() donnees: ArticleCreateDto, @Request() req: any) {
         if(req.user.role !== "Viewer") throw new ForbiddenException('Credentials incorrects !');
         if(!donnees) throw new NotAcceptableException("Credentials incorrects !");
@@ -29,7 +29,7 @@ export class ArticleController {
     }
 
     @UseGuards(AuthGuard('jwt_haizaha'))
-    @Put()
+    @Put('update')
     async updateArticle(@Body() donnees: ArticleUpdateDto, @Request() req: any) {
         if(req.user.role !== "Viewer") throw new ForbiddenException('Credentials incorrects !');
         if(!donnees) throw new NotAcceptableException("Credentials incorrects !");
@@ -37,7 +37,7 @@ export class ArticleController {
     }
 
     @UseGuards(AuthGuard('jwt_haizaha'))
-    @Delete()
+    @Delete('delete')
     async removeArticle(@Body() donnees: { id: number }, @Request() req: any) {
         if(req.user.role !== "Viewer") throw new ForbiddenException('Credentials incorrects !');
         if(!donnees) throw new NotAcceptableException("Credentials incorrects !");

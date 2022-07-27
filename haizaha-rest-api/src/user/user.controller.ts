@@ -1,6 +1,6 @@
-import { Body, Controller, ForbiddenException, Get, NotAcceptableException, Post, Request, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, ForbiddenException, Get, NotAcceptableException, Patch, Post, Request, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { UserCreateDto } from './dto';
+import { UserCreateDto, UserUpdateDto } from './dto';
 import { UserService } from './user.service';
 
 @Controller('user')
@@ -21,9 +21,23 @@ export class UserController {
         return await this.userService.findOne(parseInt(req.user.id));
     }
 
-    @Post()
+    @Post('create')
     async createUser(@Body() donnees: UserCreateDto) {
         if(!donnees) throw new NotAcceptableException("Credentials incorrects !");
         return await this.userService.create(donnees);
+    }
+
+    @UseGuards(AuthGuard('jwt_haizaha'))
+    @Patch('update')
+    async updateUser(@Body() donnees: UserUpdateDto, @Request() req: any) {
+        if(!donnees) throw new NotAcceptableException("Credentials incorrects !");
+        return await this.userService.update(parseInt(req.user.id), donnees);
+    }
+
+    @UseGuards(AuthGuard('jwt_haizaha'))
+    @Delete('delete')
+    async removeUser(@Body() donnees: { user_id: number }) {
+        if(!donnees) throw new NotAcceptableException("Credentials incorrects !");
+        return await this.userService.remove(donnees);
     }
 }
