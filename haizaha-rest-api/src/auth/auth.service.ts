@@ -13,7 +13,7 @@ export class AuthService {
         private jwtService: JwtService
     ) {}
 
-    private async signAuth(donnees: authDataSign) {
+    private async signAuth(donnees: authDataSign): Promise<string> {
         return await this.jwtService.signAsync({
             id: donnees.id,
             nom: donnees.nom,
