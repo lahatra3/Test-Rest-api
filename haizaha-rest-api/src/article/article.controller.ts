@@ -1,7 +1,7 @@
-import { Body, Controller, ForbiddenException, Get, NotAcceptableException, Post, Request, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, ForbiddenException, Get, NotAcceptableException, Post, Put, Request, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { ArticleService } from './article.service';
-import { ArticleCreateDto } from './dto';
+import { ArticleCreateDto, ArticleUpdateDto } from './dto';
 
 @Controller('article')
 export class ArticleController {
@@ -28,4 +28,16 @@ export class ArticleController {
         return await this.articleService.create(parseInt(req.user.id), donnees);
     }
 
+
+    @Put()
+    async updateArticle(@Body() donnees: ArticleUpdateDto, @Request() req: any) {
+        if(!donnees) throw new NotAcceptableException("Credentials incorrects !");
+        return this.articleService.update(parseInt(req.user.id), donnees);
+    }
+
+    @Delete()
+    async removeArticle(@Body() donnees: { id: number }) {
+        if(!donnees) throw new NotAcceptableException("Credentials incorrects !");
+        return await this.articleService.remove(donnees);
+    }
 }

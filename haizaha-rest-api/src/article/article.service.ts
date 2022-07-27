@@ -2,7 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Article, Category, User } from 'src/output';
 import { Repository } from 'typeorm';
-import { ArticleByUserDto, ArticleCreateDto } from './dto';
+import { ArticleByUserDto, ArticleCreateDto, 
+    ArticleUpdateDto } from './dto';
 
 @Injectable()
 export class ArticleService {
@@ -62,5 +63,27 @@ export class ArticleService {
             deletedAt: null
         })
         .execute();
+    }
+
+    async update(user_id: number, donnees: ArticleUpdateDto): Promise<void> {
+        await this.articleRepository
+        .createQueryBuilder()
+        .update(Article)
+        .set({
+            name: donnees.name,
+            label: donnees.label,
+            categoryId: donnees.category_id,
+            updatedAt: () => "NOW()"
+        })
+        .where(`id = :article_id AND user_id = :identifiant`, 
+            {
+                article_id: donnees.id,
+                identifiant: user_id
+            })
+        .execute();
+    }
+
+    async remove(donnees: { id: number }) {
+        await this.articleRepository.delete(donnees.id)
     }
 }
