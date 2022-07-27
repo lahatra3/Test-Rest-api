@@ -10,7 +10,6 @@ export class ArticleController {
     @UseGuards(AuthGuard('jwt_haizaha'))
     @Get()
     async getAllArticles(@Request() req: any) {
-        if(req.user.role !== "Viewer") throw new ForbiddenException('Credentials incorrects !')
         return await this.articleService.findAll();
     }
 
@@ -24,19 +23,23 @@ export class ArticleController {
     @UseGuards(AuthGuard('jwt_haizaha'))
     @Post()
     async createArticle(@Body() donnees: ArticleCreateDto, @Request() req: any) {
+        if(req.user.role !== "Viewer") throw new ForbiddenException('Credentials incorrects !');
         if(!donnees) throw new NotAcceptableException("Credentials incorrects !");
         return await this.articleService.create(parseInt(req.user.id), donnees);
     }
 
-
+    @UseGuards(AuthGuard('jwt_haizaha'))
     @Put()
     async updateArticle(@Body() donnees: ArticleUpdateDto, @Request() req: any) {
+        if(req.user.role !== "Viewer") throw new ForbiddenException('Credentials incorrects !');
         if(!donnees) throw new NotAcceptableException("Credentials incorrects !");
         return this.articleService.update(parseInt(req.user.id), donnees);
     }
 
+    @UseGuards(AuthGuard('jwt_haizaha'))
     @Delete()
-    async removeArticle(@Body() donnees: { id: number }) {
+    async removeArticle(@Body() donnees: { id: number }, @Request() req: any) {
+        if(req.user.role !== "Viewer") throw new ForbiddenException('Credentials incorrects !');
         if(!donnees) throw new NotAcceptableException("Credentials incorrects !");
         return await this.articleService.remove(donnees);
     }
