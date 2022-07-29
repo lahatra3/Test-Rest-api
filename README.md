@@ -1,1 +1,1 @@
-# Test technique REST API
+# Test REST API
