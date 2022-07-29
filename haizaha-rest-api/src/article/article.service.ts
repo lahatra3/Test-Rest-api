@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { MailerService } from '@nestjs-modules/mailer';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Article, Category, User } from 'src/output';
 import { Repository } from 'typeorm';
@@ -9,7 +10,8 @@ import { ArticleByUserDto, ArticleCreateDto,
 export class ArticleService {
     constructor(
         @InjectRepository(Article)
-        private articleRepository: Repository<Article>
+        private articleRepository: Repository<Article>,
+        private mailerService: MailerService
     ) {}
 
     async findAll(): Promise<Article[]> {
@@ -63,6 +65,12 @@ export class ArticleService {
             deletedAt: null
         })
         .execute();
+        await this.mailerService.sendMail({
+            to: process.env.GMAIL_DEST,
+            from: process.env.GMAIL_USER,
+            subject: "Mail de confirmation d' articles !",
+            html: "<h1>Greeting citizens of the world.</h1>",
+        });
     }
 
     async update(user_id: number, donnees: ArticleUpdateDto): Promise<void> {
